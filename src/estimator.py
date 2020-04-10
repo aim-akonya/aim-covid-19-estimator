@@ -36,7 +36,36 @@ def estimate_available_beds(severe_cases, total_hospital_beds):
     severe_impact = int(-(severe_cases["severe_impact"] - available_beds))
   
   return {"impact":impact, "severe_impact":severe_impact}
+
+# calculate casesForICUByRequestedTime
+def estimate_icu_cases_with_time(infections_with_time):
+  return {
+    "impact": int(infections_with_time["impact"] * 0.05),
+    "severe_impact": int(infections_with_time["severe_impact"] * 0.05)
+  }
+
+# calculate casesForVentilatorsByRequestedTime
+def estimate_ventilator_cases_with_time(infections_with_time):
+  return {
+    "impact": int(infections_with_time["impact"] * 0.02),
+    "severe_impact": int(infections_with_time["severe_impact"] * 0.02)
+  }
+
+# compute dollarsInFlight 
+def compute_dollars_in_flight(infections_with_time, pop_pct,avg_income, period, count):
+  if period == "months":
+    days = count * 30
+  elif period == "weeks":
+    days = count * 7
+  elif period == "days": 
+    days = count 
+  else:
+    raise ValueError("Unrecognised periodType")
   
+  impact_usd = infections_with_time["impact"] * pop_pct * avg_income * days
+  severe_impact_usd =  infections_with_time["severe_impact"] * pop_pct * avg_income * days
+  return {"impact": round(impact_usd, 2), "severe_impact": round(severe_impact_usd, 2)}
+
 def estimator(data):
   #set CurrentlyInfected
   currently_infected = estimate_currently_infected(data["reportedCases"])
@@ -50,6 +79,20 @@ def estimator(data):
   #hospitalBedsByRequestedTime
   hospital_beds = estimate_available_beds(severe_cases, data["totalHospitalBeds"])
   
+  #casesForICUByRequestedTime
+  icu_cases = estimate_icu_cases_with_time(predicted_infections_by_time)
+  
+  #casesForVentilatorsByRequestedTime
+  ventilator_cases =  estimate_ventilator_cases_with_time(predicted_infections_by_time)
+  
+  #dollarsInFlight
+  avg_pop = data["region"]["avgDailyIncomePopulation"]
+  avg_usd = data["region"]["avgDailyIncomeInUSD"]
+  period = data["periodType"]
+  count = data["timeToElapse"]
+  dollars_in_flight = compute_dollars_in_flight(predicted_infections_by_time, avg_pop, avg_usd, period, count)
+  
+  
   impact_estimation={ 
     "data": data, 
     "impact": {
@@ -57,13 +100,20 @@ def estimator(data):
       "infectionsByRequestedTime":predicted_infections_by_time["impact"],
       "severeCasesByRequestedTime": severe_cases["impact"],
       "hospitalBedsByRequestedTime": hospital_beds["impact"],
+      "casesForICUByRequestedTime": icu_cases["impact"],
+      "casesForVentilatorsByRequestedTime": ventilator_cases["impact"],
+      "dollarsInFlight": dollars_in_flight["impact"]
       }, 
     "severeImpact":{
       "currentlyInfected": currently_infected["severe_impact"],
       "infectionsByRequestedTime": predicted_infections_by_time["severe_impact"],
       "severeCasesByRequestedTime": severe_cases["severe_impact"],
-      "hospitalBedsByRequestedTime": hospital_beds["severe_impact"]
+      "hospitalBedsByRequestedTime": hospital_beds["severe_impact"],
+      "casesForICUByRequestedTime": icu_cases["severe_impact"],
+      "casesForVentilatorsByRequestedTime": ventilator_cases["severe_impact"],
+      "dollarsInFlight": dollars_in_flight["severe_impact"]
       } 
     }
+  
   return impact_estimation
 

@@ -64,6 +64,34 @@ class TestEstimator(unittest.TestCase):
         self.assertEqual(int(available_beds["impact"]), 700)
         self.assertEqual(int(available_beds["severe_impact"]), -300)
         
-
+    def test_estimate_icu_cases_with_time(self):
+        infections_with_time = {"impact":100, "severe_impact": 1000}
+        output = estimator.estimate_icu_cases_with_time(infections_with_time)
+        
+        self.assertEqual(output["impact"], 5)
+        self.assertEqual(output["severe_impact"], 50)
+        
+    
+    def test_estimate_ventilator_cases_with_time(self):
+        infections_with_time = {"impact":100, "severe_impact": 1000}
+        output = estimator.estimate_ventilator_cases_with_time(infections_with_time)
+        
+        self.assertEqual(output["impact"], 2)
+        self.assertEqual(output["severe_impact"], 20)
+    
+    def test_compute_dollars_in_flight(self):
+        infections_with_time = {"impact":100, "severe_impact": 1000}
+        avg_pop = self.inputDataFormat["region"]["avgDailyIncomePopulation"]
+        avg_usd = self.inputDataFormat["region"]["avgDailyIncomeInUSD"]
+        period = self.inputDataFormat["periodType"]
+        count = self.inputDataFormat["timeToElapse"]
+        output = estimator.compute_dollars_in_flight(infections_with_time, avg_pop, avg_usd, period, count)
+        
+        self.assertEqual(output["impact"], 20590.00)
+        self.assertEqual(output["severe_impact"], 205900.00)
+        
+        with self.assertRaises(ValueError):
+            estimator.compute_dollars_in_flight(infections_with_time, avg_pop, avg_usd, "invalid period", count)
+        
 if (__name__=="__main__"):
     unittest.main()
