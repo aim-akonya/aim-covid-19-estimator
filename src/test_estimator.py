@@ -24,7 +24,7 @@ class TestEstimator(unittest.TestCase):
     def test_output_format(self):
         output = estimator.estimator(self.inputDataFormat)
         print(output)
-
+        
         #assert the required keys exists in the output data
         self.assertEqual("data" in output.keys(), True)
         self.assertEqual("impact" in output.keys(), True)
@@ -49,6 +49,21 @@ class TestEstimator(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             estimator.infections_by_requested_time(current_infections, "some_val", self.inputDataFormat["timeToElapse"])
+            
+    def test_severe_cases_requested_time(self):
+        infections_by_requested_time={"impact":100, "severe_impact": 1000}
+        output = estimator.get_severe_cases_with_time(infections_by_requested_time)
+
+        self.assertEqual(output["impact"], 15)
+        self.assertEqual(output["severe_impact"], 150)
+    
+    def test_hospital_beds_by_requested_time(self):
+        severe_cases = {"impact":100, "severe_impact":1000}
+        available_beds = estimator.estimate_available_beds(severe_cases, 2000)
+        
+        self.assertEqual(int(available_beds["impact"]), 700)
+        self.assertEqual(int(available_beds["severe_impact"]), -300)
+        
 
 if (__name__=="__main__"):
     unittest.main()
