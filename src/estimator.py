@@ -20,20 +20,20 @@ def infections_by_requested_time(current, period_type, count):
 
 #approximate number of severe cases with given time
 def get_severe_cases_with_time(infections):
-  return {"impact": int(infections["impact"]*0.15), "severe_impact": int(infections["severe_impact"]*0.15)}
+  return {"impact": (infections["impact"]*0.15), "severe_impact": int(infections["severe_impact"]*0.15)}
 
 #estimate number of beds available
 def estimate_available_beds(severe_cases, total_hospital_beds):
   available_beds = total_hospital_beds * 0.35
   if severe_cases["impact"] <= available_beds:
-    impact = int(available_beds)
+    impact = (available_beds)
   else:
-    impact = int(-(severe_cases["impact"] - available_beds))
+    impact = (-(severe_cases["impact"] - available_beds))
     
   if severe_cases["severe_impact"] <= available_beds:
-    severe_impact = int(available_beds)
+    severe_impact = (available_beds)
   else:
-    severe_impact = int(-(severe_cases["severe_impact"] - available_beds))
+    severe_impact = (-(severe_cases["severe_impact"] - available_beds))
   
   return {"impact":impact, "severe_impact":severe_impact}
 
