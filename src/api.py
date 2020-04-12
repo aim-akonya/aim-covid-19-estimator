@@ -6,18 +6,18 @@ import dicttoxml
 import estimator
 import time;
 
-app = Flask(__name__)
-app.logger_name = "covid19.app"
-app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = 'Pn327@ms9oY-L5'
-CORS(app)
+application = Flask(__name__)
+application.logger_name = "covid19.app"
+application.config['DEBUG'] = True
+application.config['SECRET_KEY'] = 'Pn327@ms9oY-L5'
+CORS(application)
 
 #start timer
-@app.before_request
+@application.before_request
 def start_timer():
     g.start = time.time()
 
-@app.route("/api/v1/on-covid-19", methods=["GET","POST"])
+@application.route("/api/v1/on-covid-19", methods=["GET","POST"])
 def get_on_covid_19():
     try:
         output = estimator.estimator(request.get_json())
@@ -27,7 +27,7 @@ def get_on_covid_19():
     return jsonify(output), 200
 
 
-@app.route("/api/v1/on-covid-19/json", methods=["POST"])
+@application.route("/api/v1/on-covid-19/json", methods=["POST"])
 def get_json_covid_19_():
     try:
         output = estimator.estimator(request.get_json())
@@ -35,7 +35,7 @@ def get_json_covid_19_():
         return Response({"message":"An Error Occured"}), 400
     return jsonify(output), 200
 
-@app.route("/api/v1/on-covid-19/xml", methods=["POST"])
+@application.route("/api/v1/on-covid-19/xml", methods=["POST"])
 def get_xml_covid_19_():
     try:
         output = estimator.estimator(request.get_json())
@@ -46,14 +46,14 @@ def get_xml_covid_19_():
     return Response(xml_format, mimetype="text/xml")
 
 
-@app.route("/api/v1/on-covid-19/logs", methods=["POST"])
+@application.route("/api/v1/on-covid-19/logs", methods=["POST"])
 def get_logs_covid_19_():
     f= open("./app.log", "r")
     file_list = f.readlines()
     f.close()
     return Response(file_list, mimetype="text/data"), 200
 
-@app.teardown_request
+@application.teardown_request
 def after_request_func(err):
     method = request.method
     path =  request.path
@@ -64,11 +64,11 @@ def after_request_func(err):
     else:
         status = 200
         
-    app.logger.info(f'{method}\t\t{path}\t\t{status}\t\t{duration} ms')
+    application.logger.info(f'{method}\t\t{path}\t\t{status}\t\t{duration} ms')
 
 
 if (__name__=="__main__"):
     handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=1)
     handler.setLevel(logging.INFO)
-    app.logger.addHandler(handler)
-    app.run(port="5000")
+    application.logger.addHandler(handler)
+    application.run(port="5000")
