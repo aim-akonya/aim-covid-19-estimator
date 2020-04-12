@@ -87,8 +87,8 @@ class TestEstimator(unittest.TestCase):
         count = self.inputDataFormat["timeToElapse"]
         output = estimator.compute_dollars_in_flight(infections_with_time, avg_pop, avg_usd, period, count)
         
-        self.assertEqual(output["impact"], 6.12)
-        self.assertEqual(output["severe_impact"], 61.21)
+        self.assertEqual(output["impact"], 6)
+        self.assertEqual(output["severe_impact"], 61)
         
         with self.assertRaises(ValueError):
             estimator.compute_dollars_in_flight(infections_with_time, avg_pop, avg_usd, "invalid period", count)
