@@ -26,6 +26,15 @@ def get_on_covid_19():
     
     return jsonify(output), 200
 
+@application.route("/api/v1/on-covid-19/", methods=["GET","POST"])
+def get_covid_19():
+    try:
+        output = estimator.estimator(request.get_json())
+    except:
+        return Response({"message":"An Error Occured"}), 400
+    
+    return jsonify(output), 200
+
 
 @application.route("/api/v1/on-covid-19/json", methods=["GET", "POST"])
 def get_json_covid_19_():
