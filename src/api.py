@@ -71,4 +71,4 @@ if (__name__=="__main__"):
     handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=1)
     handler.setLevel(logging.INFO)
     application.logger.addHandler(handler)
-    application.run(port="5000")
+    application.run(host="197.232.56.28" ,port="5000")
