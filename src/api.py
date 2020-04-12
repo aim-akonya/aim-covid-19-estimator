@@ -27,7 +27,7 @@ def get_on_covid_19():
     return jsonify(output), 200
 
 
-@application.route("/api/v1/on-covid-19/json", methods=["POST"])
+@application.route("/api/v1/on-covid-19/json", methods=["GET", "POST"])
 def get_json_covid_19_():
     try:
         output = estimator.estimator(request.get_json())
@@ -35,7 +35,7 @@ def get_json_covid_19_():
         return Response({"message":"An Error Occured"}), 400
     return jsonify(output), 200
 
-@application.route("/api/v1/on-covid-19/xml", methods=["POST"])
+@application.route("/api/v1/on-covid-19/xml", methods=["POST", "POST"])
 def get_xml_covid_19_():
     try:
         output = estimator.estimator(request.get_json())
@@ -46,7 +46,7 @@ def get_xml_covid_19_():
     return Response(xml_format, mimetype="text/xml")
 
 
-@application.route("/api/v1/on-covid-19/logs", methods=["POST"])
+@application.route("/api/v1/on-covid-19/logs", methods=["GET"])
 def get_logs_covid_19_():
     f= open("./app.log", "r")
     file_list = f.readlines()
