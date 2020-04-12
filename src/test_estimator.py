@@ -23,7 +23,6 @@ class TestEstimator(unittest.TestCase):
 
     def test_output_format(self):
         output = estimator.estimator(self.inputDataFormat)
-        print(output)
         
         #assert the required keys exists in the output data
         self.assertEqual("data" in output.keys(), True)
