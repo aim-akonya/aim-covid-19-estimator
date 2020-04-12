@@ -61,8 +61,8 @@ class TestEstimator(unittest.TestCase):
         severe_cases = {"impact":100, "severe_impact":1000}
         available_beds = estimator.estimate_available_beds(severe_cases, 2000)
         
-        self.assertEqual(available_beds["impact"], 700)
-        self.assertEqual(available_beds["severe_impact"], -300)
+        self.assertEqual(int(available_beds["impact"]), 700)
+        self.assertEqual(int(available_beds["severe_impact"]), -300)
         
     def test_estimate_icu_cases_with_time(self):
         infections_with_time = {"impact":100, "severe_impact": 1000}
