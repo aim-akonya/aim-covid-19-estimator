@@ -62,8 +62,8 @@ def compute_dollars_in_flight(infections_with_time, pop_pct,avg_income, period, 
   else:
     raise ValueError("Unrecognised periodType")
   
-  impact_usd = infections_with_time["impact"] * pop_pct * avg_income * days
-  severe_impact_usd =  infections_with_time["severe_impact"] * pop_pct * avg_income * days
+  impact_usd = (infections_with_time["impact"] * pop_pct * avg_income) / days
+  severe_impact_usd =  (infections_with_time["severe_impact"] * pop_pct * avg_income) / days
   return {"impact": round(impact_usd, 2), "severe_impact": round(severe_impact_usd, 2)}
 
 def estimator(data):
